@@ -36,7 +36,7 @@ function Row({ project }: { project: AdminProject }) {
     <li
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`flex items-center justify-between gap-4 py-4 ${project.published ? "bg-background" : "bg-amber-400/10"} ${
+      className={`flex items-center justify-between gap-4 py-4 pr-4 ${project.published ? "bg-background" : "bg-amber-400/10"} ${
         isDragging ? "relative z-10 opacity-80 shadow-lg" : ""
       }`}
     >
