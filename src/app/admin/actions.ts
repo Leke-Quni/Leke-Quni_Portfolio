@@ -82,3 +82,16 @@ export async function reorderProjects(ids: string[]): Promise<{ error?: string }
   updateTag("projects");
   return {};
 }
+
+export async function deleteProject(id: string) {
+  await requireAdmin();
+  try {
+    await prisma.project.delete({ where: { id } });
+  } catch (e) {
+    if (!(e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2025")) {
+      throw e;
+    }
+  }
+  updateTag("projects");
+  redirect("/admin");
+}

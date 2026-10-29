@@ -49,15 +49,15 @@ export function ProjectForm({
       {state.error && <p className="text-sm text-red-400">{state.error}</p>}
 
       <Field name="title" label="Title" error={errors.title}>
-        <input id="title" name="title" defaultValue={project?.title} className={inputClass} />
+        <input id="title" name="title" placeholder="My Project" defaultValue={project?.title} className={inputClass} />
       </Field>
 
       <Field name="slug" label="Slug (used in the URL)" error={errors.slug}>
-        <input id="slug" name="slug" defaultValue={project?.slug} className={inputClass} />
+        <input id="slug" name="slug" placeholder="my-project" defaultValue={project?.slug} className={inputClass} />
       </Field>
 
       <Field name="tagline" label="One-line summary" error={errors.tagline}>
-        <input id="tagline" name="tagline" defaultValue={project?.tagline} className={inputClass} />
+        <input id="tagline" name="tagline" placeholder="A short one-line description of what it does." defaultValue={project?.tagline} className={inputClass} />
       </Field>
 
       <Field name="kind" label="Solo or Team" error={errors.kind}>
@@ -75,31 +75,44 @@ export function ProjectForm({
 
       {kind === "TEAM" && (
         <Field name="myRole" label="My role" error={errors.myRole}>
-          <input id="myRole" name="myRole" defaultValue={project?.myRole ?? ""} className={inputClass} />
+          <input id="myRole" name="myRole" placeholder="e.g. Built the API and authentication" defaultValue={project?.myRole ?? ""} className={inputClass} />
         </Field>
       )}
 
       <Field name="stack" label="Stack (comma separated)" error={errors.stack}>
-        <input id="stack" name="stack" defaultValue={project?.stack.join(", ")} className={inputClass} />
+        <input id="stack" name="stack" placeholder="TypeScript, React, PostgreSQL" defaultValue={project?.stack.join(", ")} className={inputClass} />
       </Field>
 
       <Field name="liveUrl" label="Live project URL" error={errors.liveUrl}>
-        <input id="liveUrl" name="liveUrl" defaultValue={project?.liveUrl ?? ""} className={inputClass} />
+        <input id="liveUrl" name="liveUrl" placeholder="https://my-project.vercel.app" defaultValue={project?.liveUrl ?? ""} className={inputClass} />
       </Field>
 
       <Field name="repoUrl" label="Repository URL" error={errors.repoUrl}>
-        <input id="repoUrl" name="repoUrl" defaultValue={project?.repoUrl ?? ""} className={inputClass} />
+        <input id="repoUrl" name="repoUrl" placeholder="https://github.com/Leka610/my-project" defaultValue={project?.repoUrl ?? ""} className={inputClass} />
       </Field>
 
       <Field name="coverImage" label="Cover image URL" error={errors.coverImage}>
-        <input id="coverImage" name="coverImage" defaultValue={project?.coverImage ?? ""} className={inputClass} />
+        <input id="coverImage" name="coverImage" placeholder="https://example.com/cover.png" defaultValue={project?.coverImage ?? ""} className={inputClass} />
       </Field>
 
-      <MarkdownField name="summary" label="Summary" defaultValue={project?.summary} error={errors.summary} />
-      <MarkdownField name="reasoning" label="Reasoning" defaultValue={project?.reasoning} error={errors.reasoning} />
+      <MarkdownField
+        name="summary"
+        label="Summary"
+        placeholder={"**Outcome:** What it achieved, e.g. shipped to 200 users.\n\n**Stack:** TypeScript, React, PostgreSQL."}
+        defaultValue={project?.summary}
+        error={errors.summary}
+      />
+      <MarkdownField
+        name="reasoning"
+        label="Reasoning"
+        placeholder={"Why you made the key decisions, and what you rejected.\n\n- Decision one, and why\n- Decision two, and why"}
+        defaultValue={project?.reasoning}
+        error={errors.reasoning}
+      />
       <MarkdownField
         name="technicalDepth"
         label="Technical depth"
+        placeholder={"Architecture, data model, tricky parts.\n\n```ts\nconst example = 'code snippet';\n```"}
         defaultValue={project?.technicalDepth}
         error={errors.technicalDepth}
       />

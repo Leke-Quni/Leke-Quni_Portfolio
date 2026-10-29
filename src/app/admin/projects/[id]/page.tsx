@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { DeleteProjectButton } from "@/components/admin/DeleteProjectButton";
 import { ProjectForm } from "@/components/admin/ProjectForm";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
@@ -18,7 +19,17 @@ async function EditProject({ params }: Pick<PageProps<"/admin/projects/[id]">, "
   const project = await prisma.project.findUnique({ where: { id } });
   if (!project) notFound();
 
-  return <ProjectForm action={updateProject.bind(null, id)} project={project} />;
+  return (
+    <>
+      <ProjectForm action={updateProject.bind(null, id)} project={project} />
+      <section className="mt-12 border-t border-foreground/10 pt-6">
+        <h2 className="mb-3 text-sm font-medium uppercase tracking-wide text-foreground/60">
+          Danger zone
+        </h2>
+        <DeleteProjectButton id={project.id} title={project.title} />
+      </section>
+    </>
+  );
 }
 
 export default function EditProjectPage({ params }: PageProps<"/admin/projects/[id]">) {
