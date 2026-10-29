@@ -39,3 +39,19 @@ _Avoid_: Rationale, decisions
 **Technical Depth**:
 The final Case Study section covering implementation detail for engineers, with prominent code links.
 _Avoid_: Implementation, deep dive
+
+**Cover Image**:
+The single picture that represents a Project on its card and in shared link previews.
+_Avoid_: Thumbnail, banner, hero image
+
+**Gallery**:
+The set of images attached to one section of a Case Study, shown as small pictures that open larger when clicked.
+_Avoid_: Screenshots, carousel, attachments
+
+**CV**:
+The PDF résumé that Leke uploads in the Admin and visitors open from the site's CV link.
+_Avoid_: Resume, document
+
+**Draft / Published**:
+Whether a Project is hidden from visitors (Draft) or visible on the site (Published).
+_Avoid_: Hidden, live, active
