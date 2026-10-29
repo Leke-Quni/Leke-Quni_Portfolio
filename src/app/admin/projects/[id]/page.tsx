@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
+import { FormSkeleton } from "@/components/admin/AdminSkeleton";
 import { DeleteProjectButton } from "@/components/admin/DeleteProjectButton";
 import { ProjectForm } from "@/components/admin/ProjectForm";
 import { requireAdmin } from "@/lib/admin";
@@ -45,7 +46,7 @@ export default function EditProjectPage({ params }: PageProps<"/admin/projects/[
         ← Admin
       </Link>
       <h1 className="mt-4 mb-6 text-3xl font-semibold tracking-tight">Edit project</h1>
-      <Suspense>
+      <Suspense fallback={<FormSkeleton />}>
         <EditProject params={params} />
       </Suspense>
     </div>

@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: { bodySizeLimit: "4mb" },
+    staleTimes: { dynamic: 30 },
   },
   partialPrefetching: true,
   turbopack: {

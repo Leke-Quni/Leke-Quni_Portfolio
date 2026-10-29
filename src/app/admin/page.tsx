@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { signOut } from "@/auth";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { ListSkeleton } from "@/components/admin/AdminSkeleton";
 import { CvUpload } from "@/components/admin/CvUpload";
 import { SortableProjectList } from "@/components/admin/SortableProjectList";
 
@@ -67,7 +68,7 @@ async function AdminDashboard() {
 
 export default function AdminPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<ListSkeleton />}>
       <AdminDashboard />
     </Suspense>
   );
