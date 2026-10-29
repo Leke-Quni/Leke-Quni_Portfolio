@@ -1,14 +1,31 @@
 import Link from "next/link";
 import { KindBadge } from "@/components/KindBadge";
 import { getPublishedProjects } from "@/lib/projects";
+import { getSiteUrl } from "@/lib/site-url";
+
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Leke Quni",
+  alternateName: "Leke",
+  url: getSiteUrl(),
+  sameAs: [
+    "https://github.com/Leka610",
+    "https://www.linkedin.com/in/leke-quni-a3a916261/",
+  ],
+};
 
 export default async function Home() {
   const projects = await getPublishedProjects();
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
       <section className="mb-12">
-        <h1 className="text-3xl font-semibold tracking-tight">Hi, I&apos;m Leke.</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Hi, I&apos;m Leke Quni.</h1>
         <p className="mt-3 text-foreground/70">
           Placeholder intro. A sentence or two on who you are and what you build.
         </p>

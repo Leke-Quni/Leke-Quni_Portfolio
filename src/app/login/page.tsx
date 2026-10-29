@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { signIn } from "@/auth";
 
 export const metadata: Metadata = {
-  title: "Sign in · Leke",
+  title: "Sign in",
   robots: { index: false },
 };
 

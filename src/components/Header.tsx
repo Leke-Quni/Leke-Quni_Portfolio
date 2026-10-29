@@ -5,7 +5,7 @@ export function Header() {
     <header className="border-b border-foreground/10">
       <nav className="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
         <Link href="/" className="font-semibold">
-          Leke
+          Leke Quni
         </Link>
         <div className="flex gap-5 text-sm">
           <Link href="/" className="hover:underline">

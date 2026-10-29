@@ -9,7 +9,7 @@ import { CvUpload } from "@/components/admin/CvUpload";
 import { SortableProjectList } from "@/components/admin/SortableProjectList";
 
 export const metadata: Metadata = {
-  title: "Admin · Leke",
+  title: "Admin",
   robots: { index: false },
 };
 
