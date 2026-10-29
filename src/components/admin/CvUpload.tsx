@@ -14,7 +14,7 @@ export function CvUpload({ hasCv }: { hasCv: boolean }) {
           View current CV
         </a>
       ) : (
-        <span className="text-foreground/50">No CV uploaded yet.</span>
+        <span className="text-foreground/60">No CV uploaded yet.</span>
       )}
       <FileUploadButton
         action={uploadCv}

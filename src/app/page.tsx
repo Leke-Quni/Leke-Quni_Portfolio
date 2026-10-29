@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { KindBadge } from "@/components/KindBadge";
+import { RemoteImage } from "@/components/RemoteImage";
 import { getPublishedProjects } from "@/lib/projects";
 import { getSiteUrl } from "@/lib/site-url";
 
@@ -49,17 +50,17 @@ export default async function Home() {
                   </div>
                   <p className="mt-1 text-foreground/70">{project.tagline}</p>
                   {project.stack.length > 0 && (
-                    <p className="mt-2 text-sm text-foreground/50">
+                    <p className="mt-2 text-sm text-foreground/60">
                       {project.stack.join(" · ")}
                     </p>
                   )}
                 </div>
                 {project.coverImage && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <RemoteImage
                     src={project.coverImage}
                     alt=""
-                    loading="lazy"
+                    width={128}
+                    height={80}
                     className="h-20 w-32 shrink-0 rounded-md border border-foreground/20 object-cover"
                   />
                 )}

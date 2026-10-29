@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { uploadImage } from "@/app/admin/actions";
 import { Markdown } from "@/components/Markdown";
+import { RemoteImage } from "@/components/RemoteImage";
 import { FileUploadButton } from "./FileUploadButton";
 
 const IMAGE_TYPES = "image/png,image/jpeg,image/gif,image/webp";
@@ -54,7 +55,7 @@ export function MarkdownField({
       <label htmlFor={name} className="mb-1 block text-sm font-medium">
         {label}
       </label>
-      <p className="mb-2 text-xs text-foreground/50">
+      <p className="mb-2 text-xs text-foreground/60">
         {"**bold** · *italic* · `code` · - list item · [link](https://…) · ```ts … ``` code block"}
       </p>
       <div className="grid gap-4 md:grid-cols-2">
@@ -82,10 +83,11 @@ export function MarkdownField({
           <ul className="mb-3 flex flex-wrap gap-3">
             {images.map((url) => (
               <li key={url} className="relative">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <RemoteImage
                   src={url}
                   alt=""
+                  width={96}
+                  height={96}
                   className="h-24 w-24 rounded-md border border-foreground/20 object-cover"
                 />
                 <button
@@ -126,10 +128,11 @@ export function MarkdownField({
             <ul className="flex flex-wrap gap-3">
               {inlineImages.map(({ markdown, url, index }) => (
                 <li key={index} className="relative">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <RemoteImage
                     src={url}
                     alt=""
+                    width={96}
+                    height={96}
                     className="h-24 w-24 rounded-md border border-foreground/20 object-cover"
                   />
                   <button

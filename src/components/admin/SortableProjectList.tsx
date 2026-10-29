@@ -44,7 +44,7 @@ function Row({ project }: { project: AdminProject }) {
         <button
           type="button"
           aria-label={`Drag to reorder ${project.title}`}
-          className="cursor-grab touch-none px-1 text-foreground/50 hover:text-foreground"
+          className="cursor-grab touch-none px-1 text-foreground/60 hover:text-foreground"
           {...attributes}
           {...listeners}
         >
@@ -54,11 +54,11 @@ function Row({ project }: { project: AdminProject }) {
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
             <span className="font-medium">{project.title}</span>
             <KindBadge kind={project.kind} />
-            <span className="text-xs text-foreground/50">
+            <span className="text-xs text-foreground/60">
               {project.published ? "Published" : "Draft"}
             </span>
           </div>
-          <p className="text-sm text-foreground/50">/projects/{project.slug}</p>
+          <p className="text-sm text-foreground/60">/projects/{project.slug}</p>
         </div>
       </div>
       <div className="flex items-center gap-4 text-sm">
@@ -124,7 +124,7 @@ export function SortableProjectList({ projects }: { projects: AdminProject[] }) 
               <Row key={project.id} project={project} />
             ))}
             {items.length === 0 && (
-              <li className="py-4 text-foreground/50">No projects yet.</li>
+              <li className="py-4 text-foreground/60">No projects yet.</li>
             )}
           </ul>
         </SortableContext>

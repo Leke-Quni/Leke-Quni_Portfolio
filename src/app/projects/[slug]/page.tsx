@@ -52,7 +52,7 @@ export default async function ProjectPage({
         </div>
         <p className="mt-2 text-foreground/70">{project.tagline}</p>
         {project.stack.length > 0 && (
-          <p className="mt-2 text-sm text-foreground/50">{project.stack.join(" · ")}</p>
+          <p className="mt-2 text-sm text-foreground/60">{project.stack.join(" · ")}</p>
         )}
         <div className="mt-4 flex gap-3 text-sm">
           {project.liveUrl && (

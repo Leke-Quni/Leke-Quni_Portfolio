@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { RemoteImage } from "@/components/RemoteImage";
 
 export function ImageGallery({
   images,
@@ -35,11 +36,11 @@ export function ImageGallery({
               aria-label={`Open ${label} image ${i + 1}`}
               className="block overflow-hidden rounded-md border border-foreground/20 hover:border-foreground/50"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <RemoteImage
                 src={url}
                 alt={`${label} image ${i + 1}`}
-                loading="lazy"
+                width={144}
+                height={96}
                 className="h-24 w-36 object-cover"
               />
             </button>
@@ -61,13 +62,15 @@ export function ImageGallery({
       >
         {openIndex !== null && (
           <div className="flex flex-col items-center gap-3 p-4">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <RemoteImage
               src={images[openIndex]}
               alt={`${label} image ${openIndex + 1}`}
-              className="max-h-[78vh] max-w-full rounded-md object-contain"
+              width={1600}
+              height={1200}
+              sizes="92vw"
+              className="h-auto max-h-[78vh] w-auto max-w-full rounded-md object-contain"
             />
-            <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-4 rounded-md bg-background px-4 py-2 text-sm">
               {images.length > 1 && (
                 <button type="button" onClick={() => step(-1)} className="hover:underline">
                   ← Previous

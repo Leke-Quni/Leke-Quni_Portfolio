@@ -1,4 +1,5 @@
 import { del } from "@vercel/blob";
+import { isOwnImageUrl } from "@/lib/image-url";
 import { prisma } from "@/lib/prisma";
 
 type ProjectImages = {
@@ -37,15 +38,6 @@ export function collectImageUrls(project: ProjectImages): Set<string> {
     for (const match of text.matchAll(INLINE_IMAGE)) urls.add(match[1]);
   }
   return urls;
-}
-
-export function isOwnImageUrl(url: string) {
-  try {
-    const { hostname, pathname } = new URL(url);
-    return hostname.endsWith(".public.blob.vercel-storage.com") && pathname.startsWith("/images/");
-  } catch {
-    return false;
-  }
 }
 
 export async function deleteUnusedImages(candidates: Iterable<string>) {

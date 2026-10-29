@@ -4,6 +4,7 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import type { Project } from "@/lib/projects";
 import type { ProjectFormState } from "@/lib/project-input";
 import { uploadImage } from "@/app/admin/actions";
+import { RemoteImage } from "@/components/RemoteImage";
 import { FileUploadButton } from "./FileUploadButton";
 import { MarkdownField } from "./MarkdownField";
 
@@ -131,10 +132,11 @@ export function ProjectForm({
       <Field name="coverImage" label="Cover image URL" error={errors.coverImage}>
         {coverImage && (
           <div className="mb-3 flex items-start gap-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <RemoteImage
               src={coverImage}
               alt="Cover preview"
+              width={144}
+              height={96}
               className="h-24 w-36 rounded-md border border-foreground/20 object-cover"
             />
             <button

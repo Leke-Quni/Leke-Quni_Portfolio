@@ -77,12 +77,12 @@ export function EmailContact() {
   }
 
   return (
-    <div>
+    <div className="w-full sm:w-auto">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <a href={`mailto:${CONTACT_EMAIL}`} onClick={handleMailtoClick} className="hover:underline">
           Email
         </a>
-        <span ref={addressRef} className="select-all text-foreground/50">
+        <span ref={addressRef} className="select-all text-foreground/60">
           {CONTACT_EMAIL}
         </span>
         <button
