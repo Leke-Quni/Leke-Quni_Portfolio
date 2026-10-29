@@ -36,7 +36,7 @@ function Row({ project }: { project: AdminProject }) {
     <li
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`flex items-center justify-between gap-4 bg-background py-4 ${
+      className={`flex items-center justify-between gap-4 py-4 ${project.published ? "bg-background" : "bg-amber-400/10"} ${
         isDragging ? "relative z-10 opacity-80 shadow-lg" : ""
       }`}
     >
@@ -54,7 +54,9 @@ function Row({ project }: { project: AdminProject }) {
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
             <span className="font-medium">{project.title}</span>
             <KindBadge kind={project.kind} />
-            <span className="text-xs text-foreground/60">
+            <span
+              className={`text-xs ${project.published ? "text-foreground/60" : "text-amber-300"}`}
+            >
               {project.published ? "Published" : "Draft"}
             </span>
           </div>

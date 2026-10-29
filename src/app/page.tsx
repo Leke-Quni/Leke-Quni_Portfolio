@@ -11,7 +11,7 @@ const personJsonLd = {
   alternateName: "Leke",
   url: getSiteUrl(),
   sameAs: [
-    "https://github.com/Leka610",
+    "https://github.com/Leke-Quni",
     "https://www.linkedin.com/in/leke-quni-a3a916261/",
   ],
 };
@@ -41,7 +41,7 @@ export default async function Home() {
             <li key={project.slug}>
               <Link
                 href={`/projects/${project.slug}`}
-                className="flex items-center justify-between gap-4 py-5 pr-4 hover:bg-foreground/5"
+                className="flex items-center justify-between gap-4 py-5 pl-4 pr-4 hover:bg-foreground/5"
               >
                 <div>
                   <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">

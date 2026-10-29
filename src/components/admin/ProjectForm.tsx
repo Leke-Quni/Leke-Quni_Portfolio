@@ -159,7 +159,7 @@ export function ProjectForm({
           <div className="flex gap-3">
             <input
               id="githubUrl"
-              placeholder="https://github.com/Leka610/my-project"
+              placeholder="https://github.com/Leke-Quni/my-project"
               value={importUrl}
               onChange={(e) => {
                 setImportUrl(e.target.value);
@@ -226,7 +226,7 @@ export function ProjectForm({
       </Field>
 
       <Field name="repoUrl" label="Repository URL" error={errors.repoUrl}>
-        <input id="repoUrl" name="repoUrl" placeholder="https://github.com/Leka610/my-project" defaultValue={project?.repoUrl ?? ""} className={inputClass} />
+        <input id="repoUrl" name="repoUrl" placeholder="https://github.com/Leke-Quni/my-project" defaultValue={project?.repoUrl ?? ""} className={inputClass} />
       </Field>
 
       <Field name="coverImage" label="Cover image URL" error={errors.coverImage}>

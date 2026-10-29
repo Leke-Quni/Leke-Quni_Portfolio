@@ -6,7 +6,7 @@ export function Footer() {
       <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-x-5 gap-y-3 px-6 py-6 text-sm text-foreground/70">
         <EmailContact />
         <a
-          href="https://github.com/Leka610"
+          href="https://github.com/Leke-Quni"
           target="_blank"
           rel="noopener noreferrer"
           className="hover:underline"
