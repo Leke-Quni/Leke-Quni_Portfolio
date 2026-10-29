@@ -55,6 +55,8 @@ export default async function ProjectPage({
           {project.liveUrl && (
             <a
               href={project.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="rounded-md bg-foreground px-3 py-1.5 text-background"
             >
               Visit live project
@@ -63,6 +65,8 @@ export default async function ProjectPage({
           {project.repoUrl && (
             <a
               href={project.repoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="rounded-md border border-foreground/20 px-3 py-1.5 hover:bg-foreground/5"
             >
               View code
