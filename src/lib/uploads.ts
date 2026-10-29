@@ -17,7 +17,12 @@ export function isPdf(bytes: Uint8Array) {
   return startsWith(bytes, [0x25, 0x50, 0x44, 0x46, 0x2d]);
 }
 
-export function safeFileName(name: string) {
-  const base = name.replace(/\.[^.]+$/, "").toLowerCase();
-  return base.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "file";
+export function imageExtension(bytes: Uint8Array) {
+  if (startsWith(bytes, [0x89, 0x50, 0x4e, 0x47])) return { ext: "png", type: "image/png" };
+  if (startsWith(bytes, [0xff, 0xd8, 0xff])) return { ext: "jpg", type: "image/jpeg" };
+  if (startsWith(bytes, [0x47, 0x49, 0x46, 0x38])) return { ext: "gif", type: "image/gif" };
+  if (startsWith(bytes, [0x52, 0x49, 0x46, 0x46]) && startsWith(bytes, [0x57, 0x45, 0x42, 0x50], 8)) {
+    return { ext: "webp", type: "image/webp" };
+  }
+  return null;
 }

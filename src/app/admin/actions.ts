@@ -5,9 +5,11 @@ import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { Prisma } from "../../../generated/prisma/client";
 import { requireAdmin } from "@/lib/admin";
+import { collectImageUrls, deleteUnusedImages, projectImageSelect } from "@/lib/blob-cleanup";
 import { prisma } from "@/lib/prisma";
 import { parseProjectForm, type ProjectFormState } from "@/lib/project-input";
-import { isImage, isPdf, MAX_UPLOAD_BYTES, safeFileName } from "@/lib/uploads";
+import { putImageDeduped } from "@/lib/blob-upload";
+import { isImage, isPdf, MAX_UPLOAD_BYTES } from "@/lib/uploads";
 
 const SLUG_TAKEN: ProjectFormState = {
   fieldErrors: { slug: "Another Project already uses this slug." },
@@ -47,6 +49,11 @@ export async function updateProject(
   const parsed = parseProjectForm(formData);
   if ("fieldErrors" in parsed) return { fieldErrors: parsed.fieldErrors };
 
+  const before = await prisma.project.findUnique({
+    where: { id },
+    select: projectImageSelect,
+  });
+
   try {
     await prisma.project.update({ where: { id }, data: parsed.data });
   } catch (e) {
@@ -55,6 +62,11 @@ export async function updateProject(
       if (e.code === "P2025") return { error: "This Project no longer exists." };
     }
     throw e;
+  }
+
+  if (before) {
+    const kept = collectImageUrls(parsed.data);
+    await deleteUnusedImages([...collectImageUrls(before)].filter((url) => !kept.has(url)));
   }
 
   updateTag("projects");
@@ -91,6 +103,10 @@ export async function reorderProjects(ids: string[]): Promise<{ error?: string }
 
 export async function deleteProject(id: string) {
   await requireAdmin();
+  const before = await prisma.project.findUnique({
+    where: { id },
+    select: projectImageSelect,
+  });
   try {
     await prisma.project.delete({ where: { id } });
   } catch (e) {
@@ -98,6 +114,7 @@ export async function deleteProject(id: string) {
       throw e;
     }
   }
+  if (before) await deleteUnusedImages(collectImageUrls(before));
   updateTag("projects");
   revalidatePath("/admin", "layout");
   redirect("/admin");
@@ -126,10 +143,7 @@ export async function uploadImage(
   const upload = await readUpload(formData, isImage, "PNG, JPEG, GIF or WebP image");
   if ("error" in upload) return upload;
 
-  const { url } = await put(`images/${safeFileName(upload.file.name)}`, upload.file, {
-    access: "public",
-    addRandomSuffix: true,
-  });
+  const { url } = await putImageDeduped(upload.file);
   return { url };
 }
 

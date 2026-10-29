@@ -107,7 +107,9 @@ export function MarkdownField({
             accept={IMAGE_TYPES}
             label="Add images"
             multiple
-            onUploaded={(url) => setImages((prev) => [...prev, url])}
+            onUploaded={(url) =>
+              setImages((prev) => (prev.includes(url) ? prev : [...prev, url]))
+            }
           />
           <FileUploadButton
             action={uploadImage}
