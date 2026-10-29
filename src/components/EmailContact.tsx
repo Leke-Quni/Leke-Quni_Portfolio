@@ -43,6 +43,12 @@ export function EmailContact() {
 
   function handleMailtoClick() {
     window.clearTimeout(openTimer.current);
+    // Phones show an app chooser without blurring the page, so a missing blur can't mean "no mail app".
+    // Copy up front instead, so the address is already on the clipboard if there is no mail app.
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      void handleCopy();
+      return;
+    }
     const cancel = () => window.clearTimeout(openTimer.current);
     window.addEventListener("blur", cancel, { once: true });
     document.addEventListener("visibilitychange", cancel, { once: true });
@@ -77,12 +83,12 @@ export function EmailContact() {
   }
 
   return (
-    <div className="w-full sm:w-auto">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+    <div>
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 sm:gap-x-3">
         <a href={`mailto:${CONTACT_EMAIL}`} onClick={handleMailtoClick} className="rounded-md border border-foreground/30 px-4 py-2 font-medium text-foreground hover:bg-foreground/10">
           Email
         </a>
-        <span ref={addressRef} className="select-all text-foreground/60">
+        <span ref={addressRef} className="hidden select-all text-foreground/60 sm:inline">
           {CONTACT_EMAIL}
         </span>
         <button
