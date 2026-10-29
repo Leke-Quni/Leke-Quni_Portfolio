@@ -64,3 +64,21 @@ export async function setPublished(id: string, published: boolean) {
   updateTag("projects");
   redirect("/admin");
 }
+
+export async function reorderProjects(ids: string[]): Promise<{ error?: string }> {
+  await requireAdmin();
+
+  const existing = await prisma.project.findMany({ select: { id: true } });
+  const known = new Set(existing.map((p) => p.id));
+  if (ids.length !== known.size || new Set(ids).size !== ids.length || !ids.every((id) => known.has(id))) {
+    return { error: "The Project list changed. Reload the page and try again." };
+  }
+
+  await prisma.$transaction(
+    ids.map((id, index) =>
+      prisma.project.update({ where: { id }, data: { order: index + 1 } }),
+    ),
+  );
+  updateTag("projects");
+  return {};
+}

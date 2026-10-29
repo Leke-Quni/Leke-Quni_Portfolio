@@ -4,8 +4,7 @@ import { Suspense } from "react";
 import { signOut } from "@/auth";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
-import { KindBadge } from "@/components/KindBadge";
-import { setPublished } from "./actions";
+import { SortableProjectList } from "@/components/admin/SortableProjectList";
 
 export const metadata: Metadata = {
   title: "Admin · Leke",
@@ -44,35 +43,15 @@ async function AdminDashboard() {
         </Link>
       </div>
 
-      <ul className="mt-4 divide-y divide-foreground/10 border-y border-foreground/10">
-        {projects.map((project) => (
-          <li key={project.id} className="flex items-center justify-between gap-4 py-4">
-            <div>
-              <div className="flex items-center gap-3">
-                <span className="font-medium">{project.title}</span>
-                <KindBadge kind={project.kind} />
-                <span className="text-xs text-foreground/50">
-                  {project.published ? "Published" : "Draft"}
-                </span>
-              </div>
-              <p className="text-sm text-foreground/50">/projects/{project.slug}</p>
-            </div>
-            <div className="flex items-center gap-4 text-sm">
-              <form action={setPublished.bind(null, project.id, !project.published)}>
-                <button type="submit" className="hover:underline">
-                  {project.published ? "Unpublish" : "Publish"}
-                </button>
-              </form>
-              <Link href={`/admin/projects/${project.id}`} className="hover:underline">
-                Edit
-              </Link>
-            </div>
-          </li>
-        ))}
-        {projects.length === 0 && (
-          <li className="py-4 text-foreground/50">No projects yet.</li>
-        )}
-      </ul>
+      <SortableProjectList
+        projects={projects.map(({ id, title, slug, kind, published }) => ({
+          id,
+          title,
+          slug,
+          kind,
+          published,
+        }))}
+      />
     </div>
   );
 }
