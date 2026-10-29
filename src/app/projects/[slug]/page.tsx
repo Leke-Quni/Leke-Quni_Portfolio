@@ -9,15 +9,16 @@ import {
   getPublishedProjects,
 } from "@/lib/projects";
 
-export function generateStaticParams() {
-  return getPublishedProjects().map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const projects = await getPublishedProjects();
+  return projects.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps<"/projects/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
   if (!project) return {};
   return {
     title: `${project.title} · Leke`,
@@ -34,10 +35,10 @@ export default async function ProjectPage({
   params,
 }: PageProps<"/projects/[slug]">) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
   if (!project) notFound();
 
-  const { previous, next } = getAdjacentProjects(slug);
+  const { previous, next } = await getAdjacentProjects(slug);
 
   return (
     <article>
@@ -75,7 +76,7 @@ export default async function ProjectPage({
         <Markdown>{project.summary}</Markdown>
       </section>
 
-      {project.kind === "team" && project.myRole && (
+      {project.kind === "TEAM" && project.myRole && (
         <section className="mb-10">
           <h2 className="mb-2 text-xl font-semibold">My role</h2>
           <p>{project.myRole}</p>
