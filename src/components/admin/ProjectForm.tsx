@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 import type { Project } from "@/lib/projects";
 import type { ProjectFormState } from "@/lib/project-input";
-import { uploadImage } from "@/app/admin/actions";
+import { importGithubRepo, uploadImage } from "@/app/admin/actions";
 import { RemoteImage } from "@/components/RemoteImage";
 import { FileUploadButton } from "./FileUploadButton";
 import { MarkdownField } from "./MarkdownField";
@@ -46,8 +46,15 @@ export function ProjectForm({
   const [state, formAction, pending] = useActionState(action, {});
   const [kind, setKind] = useState<Project["kind"]>(project?.kind ?? "SOLO");
   const [coverImage, setCoverImage] = useState(project?.coverImage ?? "");
+  const [myRole, setMyRole] = useState(project?.myRole ?? "");
+  const [summaryDefault, setSummaryDefault] = useState(project?.summary);
+  const [summaryKey, setSummaryKey] = useState(0);
+  const [importUrl, setImportUrl] = useState("");
+  const [importing, setImporting] = useState(false);
+  const [importError, setImportError] = useState("");
   const errors = state.fieldErrors ?? {};
   const formRef = useRef<HTMLFormElement>(null);
+  const imported = useRef<{ fields: Record<string, string>; summary?: string; myRole?: string } | null>(null);
 
   useEffect(() => {
     const snapshot = () =>
@@ -82,9 +89,102 @@ export function ProjectForm({
     };
   }, []);
 
+  async function importRepo() {
+    setImporting(true);
+    setImportError("");
+    const result = await importGithubRepo(importUrl);
+    setImporting(false);
+    if ("error" in result) {
+      setImportError(result.error);
+      return;
+    }
+    const form = formRef.current;
+    if (!form) return;
+    const { kind: importedKind, collaborators, myRole: importedRole, highlights, ...fields } = result.data;
+    const filled: Record<string, string> = {};
+    for (const [name, value] of Object.entries(fields)) {
+      const input = form.elements.namedItem(name);
+      if (input instanceof HTMLInputElement && value) {
+        input.value = value;
+        filled[name] = value;
+      }
+    }
+    setKind(importedKind);
+    imported.current = { fields: filled };
+    if (importedRole && !myRole.trim()) {
+      imported.current.myRole = importedRole;
+      setMyRole(importedRole);
+    }
+    const summary = form.elements.namedItem("summary");
+    if (collaborators.length > 1 && summary instanceof HTMLTextAreaElement && !summary.value.trim()) {
+      const text =
+        `**Team:** ${collaborators.join(", ")}` +
+        (highlights.length > 0
+          ? `\n\n**Highlights from my commits:**\n${highlights.map((h) => `- ${h}`).join("\n")}`
+          : "");
+      imported.current.summary = text;
+      setSummaryDefault(text);
+      setSummaryKey((k) => k + 1);
+    }
+  }
+
+  function clearImport() {
+    const form = formRef.current;
+    const previous = imported.current;
+    imported.current = null;
+    setImportError("");
+    if (!form || !previous) return;
+    for (const name of Object.keys(previous.fields)) {
+      const input = form.elements.namedItem(name);
+      if (input instanceof HTMLInputElement) input.value = "";
+    }
+    setKind("SOLO");
+    if (previous.myRole) setMyRole("");
+    const summary = form.elements.namedItem("summary");
+    if (previous.summary && summary instanceof HTMLTextAreaElement) {
+      setSummaryDefault("");
+      setSummaryKey((k) => k + 1);
+    }
+  }
+
   return (
     <form ref={formRef} action={formAction} className="space-y-6">
       {state.error && <p className="text-sm text-red-400">{state.error}</p>}
+
+      {!project && (
+        <div>
+          <label htmlFor="githubUrl" className="mb-1 block text-sm font-medium">
+            Import from GitHub (optional)
+          </label>
+          <div className="flex gap-3">
+            <input
+              id="githubUrl"
+              placeholder="https://github.com/Leka610/my-project"
+              value={importUrl}
+              onChange={(e) => {
+                setImportUrl(e.target.value);
+                if (!e.target.value.trim()) clearImport();
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  if (importUrl.trim() && !importing) importRepo();
+                }
+              }}
+              className={inputClass}
+            />
+            <button
+              type="button"
+              onClick={importRepo}
+              disabled={importing || !importUrl.trim()}
+              className="rounded-md border border-foreground/20 px-3 py-1.5 text-sm hover:bg-foreground/10 disabled:opacity-50"
+            >
+              {importing ? "Importing…" : "Import"}
+            </button>
+          </div>
+          {importError && <p className="mt-1 text-sm text-red-400">{importError}</p>}
+        </div>
+      )}
 
       <Field name="title" label="Title" error={errors.title}>
         <input id="title" name="title" placeholder="My Project" defaultValue={project?.title} className={inputClass} />
@@ -113,7 +213,7 @@ export function ProjectForm({
 
       {kind === "TEAM" && (
         <Field name="myRole" label="My role" error={errors.myRole}>
-          <input id="myRole" name="myRole" placeholder="e.g. Built the API and authentication" defaultValue={project?.myRole ?? ""} className={inputClass} />
+          <input id="myRole" name="myRole" placeholder="e.g. Built the API and authentication" value={myRole} onChange={(e) => setMyRole(e.target.value)} className={inputClass} />
         </Field>
       )}
 
@@ -167,10 +267,11 @@ export function ProjectForm({
       </Field>
 
       <MarkdownField
+        key={summaryKey}
         name="summary"
         label="Summary"
         placeholder={"**Outcome:** What it achieved, e.g. shipped to 200 users.\n\n**Stack:** TypeScript, React, PostgreSQL."}
-        defaultValue={project?.summary}
+        defaultValue={summaryDefault}
         imagesName="summaryImages"
         defaultImages={project?.summaryImages}
         error={errors.summary}

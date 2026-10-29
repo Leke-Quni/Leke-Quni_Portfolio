@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { Prisma } from "../../../generated/prisma/client";
 import { requireAdmin } from "@/lib/admin";
 import { collectImageUrls, deleteUnusedImages, projectImageSelect } from "@/lib/blob-cleanup";
+import { importFromGithub, type GithubImport } from "@/lib/github-import";
 import { prisma } from "@/lib/prisma";
 import { parseProjectForm, type ProjectFormState } from "@/lib/project-input";
 import { putImageDeduped } from "@/lib/blob-upload";
@@ -38,6 +39,17 @@ export async function createProject(
   updateTag("projects");
   revalidatePath("/admin", "layout");
   redirect("/admin");
+}
+
+export async function importGithubRepo(
+  url: string,
+): Promise<{ data: GithubImport } | { error: string }> {
+  await requireAdmin();
+  try {
+    return { data: await importFromGithub(url) };
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "Could not import the repository." };
+  }
 }
 
 export async function updateProject(
