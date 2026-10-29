@@ -1,10 +1,10 @@
+import { EmailContact } from "@/components/EmailContact";
+
 export function Footer() {
   return (
     <footer className="mt-auto border-t border-foreground/10">
-      <div className="mx-auto flex max-w-3xl flex-wrap gap-5 px-6 py-6 text-sm text-foreground/70">
-        <a href="mailto:qunileke@gmail.com" className="hover:underline">
-          Email
-        </a>
+      <div className="mx-auto flex max-w-3xl flex-wrap items-start gap-x-5 gap-y-2 px-6 py-6 text-sm text-foreground/70">
+        <EmailContact />
         <a
           href="https://github.com/Leka610"
           target="_blank"
