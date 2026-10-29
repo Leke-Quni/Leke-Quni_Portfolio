@@ -26,7 +26,7 @@ export default async function Home() {
                 className="flex items-center justify-between gap-4 py-5 pr-4 hover:bg-foreground/5"
               >
                 <div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                     <h3 className="text-lg font-medium">{project.title}</h3>
                     <KindBadge kind={project.kind} />
                   </div>

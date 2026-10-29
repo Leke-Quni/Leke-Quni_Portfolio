@@ -44,7 +44,7 @@ export default async function ProjectPage({
   return (
     <article>
       <header className="mb-8">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <h1 className="text-3xl font-semibold tracking-tight">{project.title}</h1>
           <KindBadge kind={project.kind} />
         </div>

@@ -51,7 +51,7 @@ function Row({ project }: { project: AdminProject }) {
           ⠿
         </button>
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
             <span className="font-medium">{project.title}</span>
             <KindBadge kind={project.kind} />
             <span className="text-xs text-foreground/50">
