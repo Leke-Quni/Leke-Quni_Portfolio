@@ -1,11 +1,13 @@
 "use server";
 
-import { updateTag } from "next/cache";
+import { del, put } from "@vercel/blob";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { Prisma } from "../../../generated/prisma/client";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { parseProjectForm, type ProjectFormState } from "@/lib/project-input";
+import { isImage, isPdf, MAX_UPLOAD_BYTES, safeFileName } from "@/lib/uploads";
 
 const SLUG_TAKEN: ProjectFormState = {
   fieldErrors: { slug: "Another Project already uses this slug." },
@@ -32,6 +34,7 @@ export async function createProject(
   }
 
   updateTag("projects");
+  revalidatePath("/admin", "layout");
   redirect("/admin");
 }
 
@@ -55,6 +58,7 @@ export async function updateProject(
   }
 
   updateTag("projects");
+  revalidatePath("/admin", "layout");
   redirect("/admin");
 }
 
@@ -62,6 +66,7 @@ export async function setPublished(id: string, published: boolean) {
   await requireAdmin();
   await prisma.project.update({ where: { id }, data: { published } });
   updateTag("projects");
+  revalidatePath("/admin", "layout");
   redirect("/admin");
 }
 
@@ -80,6 +85,7 @@ export async function reorderProjects(ids: string[]): Promise<{ error?: string }
     ),
   );
   updateTag("projects");
+  revalidatePath("/admin", "layout");
   return {};
 }
 
@@ -93,5 +99,63 @@ export async function deleteProject(id: string) {
     }
   }
   updateTag("projects");
+  revalidatePath("/admin", "layout");
   redirect("/admin");
+}
+
+export type UploadResult = { url?: string; error?: string };
+
+async function readUpload(
+  formData: FormData,
+  check: (bytes: Uint8Array) => boolean,
+  kind: string,
+): Promise<{ file: File } | { error: string }> {
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) return { error: "Choose a file first." };
+  if (file.size > MAX_UPLOAD_BYTES) return { error: "File is too large (max 3 MB)." };
+  const head = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+  if (!check(head)) return { error: `That doesn't look like a valid ${kind}.` };
+  return { file };
+}
+
+export async function uploadImage(
+  _prev: UploadResult,
+  formData: FormData,
+): Promise<UploadResult> {
+  await requireAdmin();
+  const upload = await readUpload(formData, isImage, "PNG, JPEG, GIF or WebP image");
+  if ("error" in upload) return upload;
+
+  const { url } = await put(`images/${safeFileName(upload.file.name)}`, upload.file, {
+    access: "public",
+    addRandomSuffix: true,
+  });
+  return { url };
+}
+
+export async function uploadCv(
+  _prev: UploadResult,
+  formData: FormData,
+): Promise<UploadResult> {
+  await requireAdmin();
+  const upload = await readUpload(formData, isPdf, "PDF");
+  if ("error" in upload) return upload;
+
+  const { url } = await put("cv/cv.pdf", upload.file, {
+    access: "public",
+    addRandomSuffix: true,
+    contentType: "application/pdf",
+  });
+
+  const previous = await prisma.siteSettings.findUnique({ where: { id: 1 } });
+  await prisma.siteSettings.upsert({
+    where: { id: 1 },
+    update: { cvUrl: url },
+    create: { id: 1, cvUrl: url },
+  });
+  if (previous?.cvUrl) await del(previous.cvUrl);
+
+  updateTag("cv");
+  revalidatePath("/admin");
+  return { url };
 }

@@ -23,17 +23,28 @@ export default async function Home() {
             <li key={project.slug}>
               <Link
                 href={`/projects/${project.slug}`}
-                className="block py-5 hover:bg-foreground/5"
+                className="flex items-center justify-between gap-4 py-5 pr-4 hover:bg-foreground/5"
               >
-                <div className="flex items-center gap-3">
-                  <h3 className="text-lg font-medium">{project.title}</h3>
-                  <KindBadge kind={project.kind} />
+                <div>
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-lg font-medium">{project.title}</h3>
+                    <KindBadge kind={project.kind} />
+                  </div>
+                  <p className="mt-1 text-foreground/70">{project.tagline}</p>
+                  {project.stack.length > 0 && (
+                    <p className="mt-2 text-sm text-foreground/50">
+                      {project.stack.join(" · ")}
+                    </p>
+                  )}
                 </div>
-                <p className="mt-1 text-foreground/70">{project.tagline}</p>
-                {project.stack.length > 0 && (
-                  <p className="mt-2 text-sm text-foreground/50">
-                    {project.stack.join(" · ")}
-                  </p>
+                {project.coverImage && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={project.coverImage}
+                    alt=""
+                    loading="lazy"
+                    className="h-20 w-32 shrink-0 rounded-md border border-foreground/20 object-cover"
+                  />
                 )}
               </Link>
             </li>

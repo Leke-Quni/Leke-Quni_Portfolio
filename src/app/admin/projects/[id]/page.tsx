@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { DeleteProjectButton } from "@/components/admin/DeleteProjectButton";
 import { ProjectForm } from "@/components/admin/ProjectForm";
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
 };
 
 async function EditProject({ params }: Pick<PageProps<"/admin/projects/[id]">, "params">) {
+  await connection();
   await requireAdmin();
   const { id } = await params;
   const project = await prisma.project.findUnique({ where: { id } });
@@ -21,7 +23,11 @@ async function EditProject({ params }: Pick<PageProps<"/admin/projects/[id]">, "
 
   return (
     <>
-      <ProjectForm action={updateProject.bind(null, id)} project={project} />
+      <ProjectForm
+        key={project.updatedAt.toISOString()}
+        action={updateProject.bind(null, id)}
+        project={project}
+      />
       <section className="mt-12 border-t border-foreground/10 pt-6">
         <h2 className="mb-3 text-sm font-medium uppercase tracking-wide text-foreground/60">
           Danger zone

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { ProjectForm } from "@/components/admin/ProjectForm";
 import { requireAdmin } from "@/lib/admin";
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 };
 
 async function NewProject() {
+  await connection();
   await requireAdmin();
   return <ProjectForm action={createProject} />;
 }

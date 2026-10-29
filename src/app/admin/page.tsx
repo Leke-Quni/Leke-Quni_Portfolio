@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { signOut } from "@/auth";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { CvUpload } from "@/components/admin/CvUpload";
 import { SortableProjectList } from "@/components/admin/SortableProjectList";
 
 export const metadata: Metadata = {
@@ -12,8 +14,10 @@ export const metadata: Metadata = {
 };
 
 async function AdminDashboard() {
+  await connection();
   const session = await requireAdmin();
   const projects = await prisma.project.findMany({ orderBy: { order: "asc" } });
+  const settings = await prisma.siteSettings.findUnique({ where: { id: 1 } });
 
   return (
     <div>
@@ -52,6 +56,11 @@ async function AdminDashboard() {
           published,
         }))}
       />
+
+      <h2 className="mt-12 text-sm font-medium uppercase tracking-wide text-foreground/60">
+        CV
+      </h2>
+      <CvUpload hasCv={!!settings?.cvUrl} />
     </div>
   );
 }

@@ -1,8 +1,10 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import type { Project } from "@/lib/projects";
 import type { ProjectFormState } from "@/lib/project-input";
+import { uploadImage } from "@/app/admin/actions";
+import { FileUploadButton } from "./FileUploadButton";
 import { MarkdownField } from "./MarkdownField";
 
 const inputClass =
@@ -42,10 +44,45 @@ export function ProjectForm({
 }) {
   const [state, formAction, pending] = useActionState(action, {});
   const [kind, setKind] = useState<Project["kind"]>(project?.kind ?? "SOLO");
+  const [coverImage, setCoverImage] = useState(project?.coverImage ?? "");
   const errors = state.fieldErrors ?? {};
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    const snapshot = () =>
+      JSON.stringify(
+        Array.from(new FormData(formRef.current!).entries()).map(([key, value]) => [
+          key,
+          typeof value === "string" ? value : value.name,
+        ]),
+      );
+    const initial = snapshot();
+    const isDirty = () => formRef.current !== null && snapshot() !== initial;
+
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty()) e.preventDefault();
+    };
+    const onClick = (e: MouseEvent) => {
+      if (!isDirty() || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const link = (e.target as Element).closest?.("a[href]") as HTMLAnchorElement | null;
+      if (!link || link.target === "_blank") return;
+      if (new URL(link.href).origin !== window.location.origin) return;
+      if (!window.confirm("You have unsaved changes. Leave without saving?")) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    window.addEventListener("beforeunload", onBeforeUnload);
+    document.addEventListener("click", onClick, true);
+    return () => {
+      window.removeEventListener("beforeunload", onBeforeUnload);
+      document.removeEventListener("click", onClick, true);
+    };
+  }, []);
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form ref={formRef} action={formAction} className="space-y-6">
       {state.error && <p className="text-sm text-red-400">{state.error}</p>}
 
       <Field name="title" label="Title" error={errors.title}>
@@ -92,7 +129,39 @@ export function ProjectForm({
       </Field>
 
       <Field name="coverImage" label="Cover image URL" error={errors.coverImage}>
-        <input id="coverImage" name="coverImage" placeholder="https://example.com/cover.png" defaultValue={project?.coverImage ?? ""} className={inputClass} />
+        {coverImage && (
+          <div className="mb-3 flex items-start gap-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={coverImage}
+              alt="Cover preview"
+              className="h-24 w-36 rounded-md border border-foreground/20 object-cover"
+            />
+            <button
+              type="button"
+              onClick={() => setCoverImage("")}
+              className="rounded-md border border-red-400/50 px-3 py-1.5 text-sm text-red-400 hover:bg-red-400/10"
+            >
+              Remove
+            </button>
+          </div>
+        )}
+        <div className="flex gap-3">
+          <input
+            id="coverImage"
+            name="coverImage"
+            placeholder="https://example.com/cover.png"
+            value={coverImage}
+            onChange={(e) => setCoverImage(e.target.value)}
+            className={inputClass}
+          />
+          <FileUploadButton
+            action={uploadImage}
+            accept="image/png,image/jpeg,image/gif,image/webp"
+            label={coverImage ? "Replace" : "Upload"}
+            onUploaded={setCoverImage}
+          />
+        </div>
       </Field>
 
       <MarkdownField
@@ -100,21 +169,30 @@ export function ProjectForm({
         label="Summary"
         placeholder={"**Outcome:** What it achieved, e.g. shipped to 200 users.\n\n**Stack:** TypeScript, React, PostgreSQL."}
         defaultValue={project?.summary}
+        imagesName="summaryImages"
+        defaultImages={project?.summaryImages}
         error={errors.summary}
+        imagesError={errors.summaryImages}
       />
       <MarkdownField
         name="reasoning"
         label="Reasoning"
         placeholder={"Why you made the key decisions, and what you rejected.\n\n- Decision one, and why\n- Decision two, and why"}
         defaultValue={project?.reasoning}
+        imagesName="reasoningImages"
+        defaultImages={project?.reasoningImages}
         error={errors.reasoning}
+        imagesError={errors.reasoningImages}
       />
       <MarkdownField
         name="technicalDepth"
         label="Technical depth"
         placeholder={"Architecture, data model, tricky parts.\n\n```ts\nconst example = 'code snippet';\n```"}
         defaultValue={project?.technicalDepth}
+        imagesName="technicalDepthImages"
+        defaultImages={project?.technicalDepthImages}
         error={errors.technicalDepth}
+        imagesError={errors.technicalDepthImages}
       />
 
       <label className="flex items-center gap-2 text-sm">

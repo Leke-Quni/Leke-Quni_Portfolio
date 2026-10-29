@@ -15,6 +15,12 @@ const optionalUrl = z
   .refine((v) => v === "" || isHttpUrl(v), "Enter a full http(s) URL.")
   .transform((v) => (v === "" ? null : v));
 
+const MAX_SECTION_IMAGES = 12;
+
+const imageList = z
+  .array(z.string().trim().refine(isHttpUrl, "Enter a full http(s) URL."))
+  .max(MAX_SECTION_IMAGES, `Up to ${MAX_SECTION_IMAGES} images per section.`);
+
 const projectSchema = z.object({
   slug: z
     .string()
@@ -31,6 +37,9 @@ const projectSchema = z.object({
   summary: z.string().trim().min(1, "Required."),
   reasoning: z.string().trim().min(1, "Required."),
   technicalDepth: z.string().trim().min(1, "Required."),
+  summaryImages: imageList,
+  reasoningImages: imageList,
+  technicalDepthImages: imageList,
   published: z.boolean(),
 });
 
@@ -54,6 +63,9 @@ export function parseProjectForm(formData: FormData) {
     summary: get("summary"),
     reasoning: get("reasoning"),
     technicalDepth: get("technicalDepth"),
+    summaryImages: formData.getAll("summaryImages").map(String),
+    reasoningImages: formData.getAll("reasoningImages").map(String),
+    technicalDepthImages: formData.getAll("technicalDepthImages").map(String),
     published: formData.get("published") === "on",
   });
 

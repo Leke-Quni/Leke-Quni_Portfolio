@@ -113,6 +113,7 @@ export function SortableProjectList({ projects }: { projects: AdminProject[] }) 
     <div>
       {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
       <DndContext
+        id="admin-project-list"
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}

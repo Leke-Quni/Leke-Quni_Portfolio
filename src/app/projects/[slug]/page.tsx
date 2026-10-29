@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ImageGallery } from "@/components/ImageGallery";
 import { KindBadge } from "@/components/KindBadge";
 import { Markdown } from "@/components/Markdown";
 import {
@@ -78,6 +79,7 @@ export default async function ProjectPage({
       <section className="mb-10">
         <h2 className="mb-2 text-xl font-semibold">Summary</h2>
         <Markdown>{project.summary}</Markdown>
+        <ImageGallery images={project.summaryImages} label="Summary" />
       </section>
 
       {project.kind === "TEAM" && project.myRole && (
@@ -90,11 +92,13 @@ export default async function ProjectPage({
       <section className="mb-10">
         <h2 className="mb-2 text-xl font-semibold">Reasoning</h2>
         <Markdown>{project.reasoning}</Markdown>
+        <ImageGallery images={project.reasoningImages} label="Reasoning" />
       </section>
 
       <section className="mb-10">
         <h2 className="mb-2 text-xl font-semibold">Technical depth</h2>
         <Markdown>{project.technicalDepth}</Markdown>
+        <ImageGallery images={project.technicalDepthImages} label="Technical depth" />
       </section>
 
       <nav className="flex justify-between border-t border-foreground/10 pt-6 text-sm">

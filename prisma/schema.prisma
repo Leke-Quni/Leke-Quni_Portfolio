@@ -13,23 +13,32 @@ enum ProjectKind {
 }
 
 model Project {
-  id             String      @id @default(cuid())
-  slug           String      @unique
-  title          String
-  tagline        String
-  kind           ProjectKind
-  myRole         String?
-  stack          String[]
-  repoUrl        String?
-  liveUrl        String?
-  coverImage     String?
-  order          Int
-  published      Boolean     @default(false)
-  summary        String
-  reasoning      String
-  technicalDepth String
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  id                   String      @id @default(cuid())
+  slug                 String      @unique
+  title                String
+  tagline              String
+  kind                 ProjectKind
+  myRole               String?
+  stack                String[]
+  repoUrl              String?
+  liveUrl              String?
+  coverImage           String?
+  order                Int
+  published            Boolean     @default(false)
+  summary              String
+  reasoning            String
+  technicalDepth       String
+  summaryImages        String[]    @default([])
+  reasoningImages      String[]    @default([])
+  technicalDepthImages String[]    @default([])
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
 
   @@index([published, order])
+}
+
+model SiteSettings {
+  id        Int      @id @default(1)
+  cvUrl     String?
+  updatedAt DateTime @updatedAt
 }
