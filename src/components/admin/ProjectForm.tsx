@@ -186,11 +186,11 @@ export function ProjectForm({
         </div>
       )}
 
-      <Field name="title" label="Title" error={errors.title}>
+      <Field name="title" label="Title *"error={errors.title}>
         <input id="title" name="title" placeholder="My Project" defaultValue={project?.title} className={inputClass} />
       </Field>
 
-      <Field name="slug" label="Slug (used in the URL)" error={errors.slug}>
+      <Field name="slug" label="Slug (used in the URL) *"error={errors.slug}>
         <input id="slug" name="slug" placeholder="my-project" defaultValue={project?.slug} className={inputClass} />
       </Field>
 

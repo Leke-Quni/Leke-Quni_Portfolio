@@ -25,18 +25,19 @@ const projectSchema = z.object({
   slug: z
     .string()
     .trim()
+    .min(1, "A slug is required.")
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use lowercase letters, numbers and hyphens."),
-  title: z.string().trim().min(1, "Required."),
-  tagline: z.string().trim().min(1, "Required."),
+  title: z.string().trim().min(1, "A project name is required."),
+  tagline: z.string().trim(),
   kind: z.enum(["SOLO", "TEAM"]),
   myRole: z.string().trim(),
   stack: z.string(),
   repoUrl: optionalUrl,
   liveUrl: optionalUrl,
   coverImage: optionalUrl,
-  summary: z.string().trim().min(1, "Required."),
-  reasoning: z.string().trim().min(1, "Required."),
-  technicalDepth: z.string().trim().min(1, "Required."),
+  summary: z.string().trim(),
+  reasoning: z.string().trim(),
+  technicalDepth: z.string().trim(),
   summaryImages: imageList,
   reasoningImages: imageList,
   technicalDepthImages: imageList,

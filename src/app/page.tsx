@@ -48,7 +48,9 @@ export default async function Home() {
                     <h3 className="text-lg font-medium">{project.title}</h3>
                     <KindBadge kind={project.kind} />
                   </div>
-                  <p className="mt-1 text-foreground/70">{project.tagline}</p>
+                  {project.tagline && (
+                    <p className="mt-1 text-foreground/70">{project.tagline}</p>
+                  )}
                   {project.stack.length > 0 && (
                     <p className="mt-2 text-sm text-foreground/60">
                       {project.stack.join(" · ")}

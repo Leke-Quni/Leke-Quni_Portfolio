@@ -23,12 +23,12 @@ export async function generateMetadata({
   if (!project) return {};
   return {
     title: project.title,
-    description: project.tagline,
+    description: project.tagline || undefined,
     alternates: { canonical: `/projects/${project.slug}` },
     openGraph: {
       type: "article",
       title: project.title,
-      description: project.tagline,
+      description: project.tagline || undefined,
       images: [project.coverImage ?? "/opengraph-image"],
     },
   };
@@ -50,7 +50,7 @@ export default async function ProjectPage({
           <h1 className="text-3xl font-semibold tracking-tight">{project.title}</h1>
           <KindBadge kind={project.kind} />
         </div>
-        <p className="mt-2 text-foreground/70">{project.tagline}</p>
+        {project.tagline && <p className="mt-2 text-foreground/70">{project.tagline}</p>}
         {project.stack.length > 0 && (
           <p className="mt-2 text-sm text-foreground/60">{project.stack.join(" · ")}</p>
         )}
@@ -78,11 +78,13 @@ export default async function ProjectPage({
         </div>
       </header>
 
-      <section className="mb-10">
-        <h2 className="mb-2 text-xl font-semibold">Summary</h2>
-        <Markdown>{project.summary}</Markdown>
-        <ImageGallery images={project.summaryImages} label="Summary" />
-      </section>
+      {(project.summary || project.summaryImages.length > 0) && (
+        <section className="mb-10">
+          <h2 className="mb-2 text-xl font-semibold">Summary</h2>
+          <Markdown>{project.summary}</Markdown>
+          <ImageGallery images={project.summaryImages} label="Summary" />
+        </section>
+      )}
 
       {project.kind === "TEAM" && project.myRole && (
         <section className="mb-10">
@@ -91,17 +93,21 @@ export default async function ProjectPage({
         </section>
       )}
 
-      <section className="mb-10">
-        <h2 className="mb-2 text-xl font-semibold">Reasoning</h2>
-        <Markdown>{project.reasoning}</Markdown>
-        <ImageGallery images={project.reasoningImages} label="Reasoning" />
-      </section>
+      {(project.reasoning || project.reasoningImages.length > 0) && (
+        <section className="mb-10">
+          <h2 className="mb-2 text-xl font-semibold">Reasoning</h2>
+          <Markdown>{project.reasoning}</Markdown>
+          <ImageGallery images={project.reasoningImages} label="Reasoning" />
+        </section>
+      )}
 
-      <section className="mb-10">
-        <h2 className="mb-2 text-xl font-semibold">Technical depth</h2>
-        <Markdown>{project.technicalDepth}</Markdown>
-        <ImageGallery images={project.technicalDepthImages} label="Technical depth" />
-      </section>
+      {(project.technicalDepth || project.technicalDepthImages.length > 0) && (
+        <section className="mb-10">
+          <h2 className="mb-2 text-xl font-semibold">Technical depth</h2>
+          <Markdown>{project.technicalDepth}</Markdown>
+          <ImageGallery images={project.technicalDepthImages} label="Technical depth" />
+        </section>
+      )}
 
       <nav className="flex justify-between border-t border-foreground/10 pt-6 text-sm">
         {previous ? (
